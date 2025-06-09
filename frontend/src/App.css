@@ -1,0 +1,39 @@
+.App {
+  text-align: center;
+}
+
+.app {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a,
+.nav-button {
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.navbar a:hover,
+.nav-button:hover {
+  text-decoration: underline;
+}
+
