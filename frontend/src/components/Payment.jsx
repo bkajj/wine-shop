@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/Payment.css";
 import PropTypes from "prop-types";
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
 function parseJwt(token) {
   if (!token) return null;
   try {
@@ -75,7 +77,7 @@ export default function Payment({ clearCart }) {
       total: parseFloat(totalPrice)
     };
 
-    fetch("http://localhost:8080/payment", {
+    fetch(`${BACKEND_API_URL}/payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

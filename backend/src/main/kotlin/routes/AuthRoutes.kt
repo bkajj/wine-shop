@@ -13,8 +13,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import io.github.cdimascio.dotenv.dotenv
 
 val userDB = ConcurrentHashMap<String, User>()
+val dotenv = dotenv()
+val port = dotenv["PORT"]?.toInt() ?: 8080
 
 fun generateToken(user: User): String {
     val jwtIssuer = "WineShop"

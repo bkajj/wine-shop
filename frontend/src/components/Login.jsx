@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000';
+
 function Login({ onLoginSuccess }) {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
@@ -33,7 +36,7 @@ function Login({ onLoginSuccess }) {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch(`${BACKEND_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -94,7 +97,7 @@ function Login({ onLoginSuccess }) {
           type="button"
           className="google-button"
           onClick={() => {
-            window.location.href = 'http://localhost:8080/login-google?redirectUrl=http://localhost:3000/';
+            window.location.href = `${BACKEND_API_URL}/login-google?redirectUrl=${FRONTEND_URL}`;
           }}
         >
           <img src="/google.svg" alt="Google logo" className="google-icon" />
@@ -106,7 +109,7 @@ function Login({ onLoginSuccess }) {
           type="button"
           className="google-button"
           onClick={() => {
-            window.location.href = 'http://localhost:8080/login-github?redirectUrl=http://localhost:3000/';
+            window.location.href = `${BACKEND_API_URL}/login-github?redirectUrl=${FRONTEND_URL}`;
           }}
         >
           <img src="/github.svg" alt="Github logo" className="google-icon" />

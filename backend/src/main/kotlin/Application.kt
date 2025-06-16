@@ -39,11 +39,19 @@ val applicationHttpClient = HttpClient(CIO) {
     }
 }
 
+val dotenv = dotenv {
+    ignoreIfMissing = false
+}
+
 val redirects = mutableMapOf<String, String>()
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 8000, host = "0.0.0.0", module = Application::module).start(wait = true)
 }
+
+// todo zrobic wczytanie secretow z env zaleznie od tego czy na produkcji czy lokalnie to jest
+// jesli to zrobie sprobowac ustawic pipeline i testowac czy dziala
+
 
 fun Application.module() {
     install(ServerContentNegotiation) {
@@ -146,7 +154,7 @@ fun Application.module() {
                     val redirectUrl = redirects[state] + "?token=$jwtToken"
                     call.respondRedirect(redirectUrl)
                 } else {
-                    call.respondRedirect("http://localhost:3000/?token=$jwtToken")
+                    call.respondRedirect("${dotenv["FRONTEND_URL"]}/?token=$jwtToken")
                 }
             }
         }
@@ -180,10 +188,7 @@ fun Application.configureAuth() {
             }
         }
         oauth("auth-oauth-google") {
-            val dotenv = dotenv {
-                ignoreIfMissing = false
-            }
-            urlProvider = { "http://localhost:8080/callback" }
+            urlProvider = { "${dotenv["FRONTEND_URL"]}/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
@@ -207,10 +212,7 @@ fun Application.configureAuth() {
             client = applicationHttpClient
         }
         oauth("auth-oauth-github") {
-            val dotenv = dotenv {
-                ignoreIfMissing = false
-            }
-            urlProvider = { "http://localhost:8080/login-github/callback" }
+            urlProvider = { "${dotenv["FRONTEND_URL"]}/login-github/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "github",

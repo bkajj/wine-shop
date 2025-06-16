@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
 function Register({ onRegisterSuccess }) {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -16,7 +18,7 @@ function Register({ onRegisterSuccess }) {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8080/register', {
+      const response = await fetch(`${BACKEND_API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

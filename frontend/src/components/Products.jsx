@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import "../styles/Products.css";
 import PropTypes from "prop-types";
 
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+
 export default function Products({ addToCart }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/products")
+    fetch(`${BACKEND_API_URL}/products`)
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((err) => console.error(err));
