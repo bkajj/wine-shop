@@ -49,10 +49,6 @@ fun main() {
     embeddedServer(Netty, port = 8000, host = "0.0.0.0", module = Application::module).start(wait = true)
 }
 
-// todo zrobic wczytanie secretow z env zaleznie od tego czy na produkcji czy lokalnie to jest
-// jesli to zrobie sprobowac ustawic pipeline i testowac czy dziala
-
-
 fun Application.module() {
     install(ServerContentNegotiation) {
         json()
@@ -219,8 +215,8 @@ fun Application.configureAuth() {
                     authorizeUrl = "https://github.com/login/oauth/authorize",
                     accessTokenUrl = "https://github.com/login/oauth/access_token",
                     requestMethod = HttpMethod.Post,
-                    clientId = dotenv["GITHUB_CLIENT_ID"],
-                    clientSecret = dotenv["GITHUB_CLIENT_SECRET"],
+                    clientId = dotenv["GIT_CLIENT_ID"],
+                    clientSecret = dotenv["GIT_CLIENT_SECRET"],
                     defaultScopes = listOf("read:user", "user:email")
                 )
             }
