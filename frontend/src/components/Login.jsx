@@ -35,6 +35,13 @@ function Login({ onLoginSuccess }) {
     e.preventDefault();
     setError('');
 
+    const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+    const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000';
+  
+    console.log('BACKEND:', BACKEND_API_URL);
+    console.log('FRONTEND:', FRONTEND_URL);
+    
+
     try {
       const response = await fetch(`${BACKEND_API_URL}/login`, {
         method: 'POST',

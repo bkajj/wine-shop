@@ -7,6 +7,10 @@ import Login from './components/Login';
 import Register from './components/Register';
 import './App.css';
 
+
+const BACKEND_API_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+const FRONTEND_URL = process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000';
+
 function App() {
   const [cart, setCart] = useState([]);
   const [token, setToken] = useState(sessionStorage.getItem('token'));
@@ -16,6 +20,8 @@ function App() {
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token');
+    console.log('BACKEND:', BACKEND_API_URL);
+    console.log('FRONTEND:', FRONTEND_URL);
     if (storedToken && !token) {
       setToken(storedToken);
     }
