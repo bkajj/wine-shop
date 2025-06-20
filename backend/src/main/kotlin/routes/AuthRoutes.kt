@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap
 import io.github.cdimascio.dotenv.dotenv
 
 val userDB = ConcurrentHashMap<String, User>()
-val dotenv = dotenv()
-val port = dotenv["PORT"]?.toInt() ?: 8080
 
 fun generateToken(user: User): String {
     val jwtIssuer = "WineShop"
