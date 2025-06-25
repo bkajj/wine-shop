@@ -1,0 +1,7 @@
+services:
+  frontend:
+    container_name: zad10-frontend
+    image: bkaj/frontend-ebiz:latest
+    ports:
+      - "3000:3000"
+    restart: always
