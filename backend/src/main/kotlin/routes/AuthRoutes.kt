@@ -1,5 +1,6 @@
 package routes
 
+import io.ktor.http.*
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import models.User
@@ -44,7 +45,10 @@ fun Route.authRoutes() {
         }
 
         if (existingUser != null) {
-            call.respond(RegisterResponse(status = "error", message = "Użytkownik już istnieje"))
+            call.respond(
+                HttpStatusCode.Conflict,
+                RegisterResponse(status = "error", message = "Użytkownik już istnieje")
+            )
             return@post
         }
 
@@ -75,7 +79,10 @@ fun Route.authRoutes() {
             }
 
         if (user == null) {
-            call.respond(LoginResponse(status = "error", message = "Nieprawidłowe dane logowania"))
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                LoginResponse(status = "error", message = "Nieprawidłowe dane logowania")
+            )
         } else {
             val token = generateToken(user)
             call.respond(LoginResponse(status = "success", token = token))
