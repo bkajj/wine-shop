@@ -13,6 +13,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import at.favre.lib.crypto.bcrypt.BCrypt
 import config.AppConfig
 
 val userDB = ConcurrentHashMap<String, User>()
@@ -47,11 +48,13 @@ fun Route.authRoutes() {
             return@post
         }
 
+        val hashedPassword = BCrypt.withDefaults().hashToString(12, data.password.toCharArray())
+
         val user = User(
             id = UUID.randomUUID().toString(),
             username = data.username,
             email = data.email,
-            password = data.password
+            password = hashedPassword
         )
 
         println("Zarejestrowano użytkownika: ${data.username}")
@@ -63,9 +66,13 @@ fun Route.authRoutes() {
     post("/login") {
         val data = call.receive<LoginRequest>()
 
-        val user = userDB.values.find {
-            it.username == data.username && it.password == data.password
-        }
+        val user = userDB.values
+            .find { it.username == data.username }
+            ?.takeIf {
+                BCrypt.verifyer()
+                    .verify(data.password.toCharArray(), it.password)
+                    .verified
+            }
 
         if (user == null) {
             call.respond(LoginResponse(status = "error", message = "Nieprawidłowe dane logowania"))
