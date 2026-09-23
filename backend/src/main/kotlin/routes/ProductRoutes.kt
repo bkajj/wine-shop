@@ -13,6 +13,7 @@ import models.Product
 import models.Order
 import models.requests.PaymentRequest
 import models.responses.UserResponse
+import config.AppConfig
 
 val products = listOf(
     Product(1, "Wino Czerwone", 49.99),
@@ -22,7 +23,7 @@ val products = listOf(
 
 fun parseJwt(token: String?): DecodedJWT? {
     return try {
-        val jwtSecret = "supersecretkey"
+        val jwtSecret = AppConfig.jwtSecret
         val algorithm = Algorithm.HMAC256(jwtSecret)
 
         JWT.require(algorithm)

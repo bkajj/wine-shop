@@ -17,12 +17,12 @@ import io.ktor.http.*
 import io.ktor.client.call.body
 import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
-import io.github.cdimascio.dotenv.dotenv
 import io.ktor.client.request.*
 import io.ktor.server.routing.header
 import kotlinx.serialization.json.*
 import models.User
 import models.UserInfo
+import config.AppConfig
 
 import routes.authRoutes
 import routes.generateToken
@@ -37,10 +37,6 @@ val applicationHttpClient = HttpClient(CIO) {
             ignoreUnknownKeys = true
         })
     }
-}
-
-val dotenv = dotenv {
-    ignoreIfMissing = false
 }
 
 val redirects = mutableMapOf<String, String>()
@@ -150,7 +146,7 @@ fun Application.module() {
                     val redirectUrl = redirects[state] + "?token=$jwtToken"
                     call.respondRedirect(redirectUrl)
                 } else {
-                    call.respondRedirect("${dotenv["FRONTEND_URL"]}/?token=$jwtToken")
+                    call.respondRedirect("${AppConfig.frontendUrl}/?token=$jwtToken")
                 }
             }
         }
@@ -166,7 +162,7 @@ fun Application.module() {
 fun Application.configureAuth() {
     val jwtIssuer = environment.config.propertyOrNull("jwt.issuer")?.getString() ?: "WineShop"
     val jwtAudience = environment.config.propertyOrNull("jwt.audience")?.getString() ?: "WineShopAudience"
-    val jwtSecret = environment.config.propertyOrNull("jwt.secret")?.getString() ?: "supersecretkey"
+    val jwtSecret = AppConfig.jwtSecret
 
     install(Authentication) {
         jwt("auth-jwt") {
@@ -184,15 +180,15 @@ fun Application.configureAuth() {
             }
         }
         oauth("auth-oauth-google") {
-            urlProvider = { "${dotenv["FRONTEND_URL"]}/callback" }
+            urlProvider = { "${AppConfig.frontendUrl}/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "google",
                     authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
                     accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
                     requestMethod = HttpMethod.Post,
-                    clientId = dotenv["GOOGLE_CLIENT_ID"],
-                    clientSecret = dotenv["GOOGLE_CLIENT_SECRET"],
+                    clientId = AppConfig.googleClientId,
+                    clientSecret = AppConfig.googleClientSecret,
                     defaultScopes = listOf(
                         "https://www.googleapis.com/auth/userinfo.profile",
                         "https://www.googleapis.com/auth/userinfo.email"),
@@ -208,15 +204,15 @@ fun Application.configureAuth() {
             client = applicationHttpClient
         }
         oauth("auth-oauth-github") {
-            urlProvider = { "${dotenv["FRONTEND_URL"]}/login-github/callback" }
+            urlProvider = { "${AppConfig.frontendUrl}/login-github/callback" }
             providerLookup = {
                 OAuthServerSettings.OAuth2ServerSettings(
                     name = "github",
                     authorizeUrl = "https://github.com/login/oauth/authorize",
                     accessTokenUrl = "https://github.com/login/oauth/access_token",
                     requestMethod = HttpMethod.Post,
-                    clientId = dotenv["GIT_CLIENT_ID"],
-                    clientSecret = dotenv["GIT_CLIENT_SECRET"],
+                    clientId = AppConfig.githubClientId,
+                    clientSecret = AppConfig.githubClientSecret,
                     defaultScopes = listOf("read:user", "user:email")
                 )
             }

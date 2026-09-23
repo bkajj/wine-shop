@@ -13,14 +13,14 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import io.github.cdimascio.dotenv.dotenv
+import config.AppConfig
 
 val userDB = ConcurrentHashMap<String, User>()
 
 fun generateToken(user: User): String {
     val jwtIssuer = "WineShop"
     val jwtAudience = "WineShopAudience"
-    val jwtSecret = "supersecretkey"
+    val jwtSecret = AppConfig.jwtSecret
     val expirationTime = System.currentTimeMillis() + 24 * 60 * 60 * 1000 // 24h
 
     return JWT.create()
@@ -29,7 +29,6 @@ fun generateToken(user: User): String {
         .withClaim("userId", user.id)
         .withClaim("username", user.username)
         .withClaim("email", user.email)
-        .withClaim("password", user.password)
         .withExpiresAt(Date(expirationTime))
         .sign(Algorithm.HMAC256(jwtSecret))
 }
@@ -55,7 +54,7 @@ fun Route.authRoutes() {
             password = data.password
         )
 
-        println("Zarejestrowano użytkownika - username: ${data.username}, haslo: ${data.password}")
+        println("Zarejestrowano użytkownika: ${data.username}")
 
         userDB[user.id] = user
         call.respond(RegisterResponse(status = "success", userId = user.id))
